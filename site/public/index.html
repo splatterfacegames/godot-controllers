@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="godot-controllers: input management and normalization for Godot 4.7. Xbox, PlayStation, Nintendo and generic pads, keyboard and mouse. Live demo in the browser." />
+    <meta name="theme-color" content="#11141b" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="godot-controllers: every controller, one input layer, for Godot 4" />
+    <meta property="og:description" content="Players and press-to-join, action maps, rebinding, deadzones, live glyphs and rumble. MIT." />
+    <meta property="og:url" content="https://godot-controllers.splatterfacegames.com" />
+    <link rel="canonical" href="https://godot-controllers.splatterfacegames.com" />
+    <link rel="icon" href="/img/xbox_stick_l.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>godot-controllers: every controller, one input layer, for Godot 4</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top"><img src="/img/xbox_stick_l.png" width="28" height="28" alt="" /><span>godot-controllers</span></a>
+      <nav aria-label="Primary">
+        <a href="#demo">Demo</a>
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#hardware">Hardware</a>
+        <a class="nav-source" href="https://github.com/splatterfacegames/godot-controllers">Source</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <h1>Every controller, one input layer.</h1>
+          <p class="lede">
+            godot-controllers is a Godot 4.7 addon for input management and
+            normalization. Xbox, PlayStation, Nintendo and generic pads, and
+            keyboard and mouse, all map onto one layout. Each player gets
+            their own devices, actions, bindings and glyphs.
+          </p>
+          <div class="actions">
+            <a class="button button-primary" href="#demo">Run the demo</a>
+            <a class="button button-quiet" href="https://github.com/splatterfacegames/godot-controllers">Read the source</a>
+          </div>
+          <dl class="facts">
+            <div><dt>Engine</dt><dd>Godot 4.7</dd></div>
+            <div><dt>Code</dt><dd>Pure GDScript</dd></div>
+            <div><dt>Glyphs</dt><dd>Kenney, CC0</dd></div>
+            <div><dt>Licence</dt><dd>MIT</dd></div>
+          </dl>
+        </div>
+        <figure class="glyph-wall" aria-label="The same Jump, Fire and Move bindings on four device families">
+          <div class="row"><span>Xbox</span><img src="/img/xbox_button_color_a.png" alt="A" /><img src="/img/xbox_rt.png" alt="RT" /><img src="/img/xbox_stick_l.png" alt="Left stick" /></div>
+          <div class="row"><span>PlayStation</span><img src="/img/playstation_button_color_cross.png" alt="Cross" /><img src="/img/playstation_trigger_r2.png" alt="R2" /><img src="/img/playstation_stick_l.png" alt="Left stick" /></div>
+          <div class="row"><span>Nintendo</span><img src="/img/switch_button_b.png" alt="B" /><img src="/img/switch_button_zr.png" alt="ZR" /><img src="/img/switch_stick_l.png" alt="Left stick" /></div>
+          <div class="row"><span>Keyboard</span><img src="/img/keyboard_space.png" alt="Space" /><img src="/img/mouse_left.png" alt="Left mouse button" /><img src="/img/keyboard_w.png" alt="W" /></div>
+          <figcaption>One declaration: <code>jump</code>, <code>fire</code>, <code>move</code>. Each player sees the glyphs for the device they last touched.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section" id="demo" aria-labelledby="demo-title">
+        <div class="section-head">
+          <h2 id="demo-title">Try it in your browser.</h2>
+          <p>
+            Plug in up to four controllers, or use the keyboard. Press
+            <kbd>Start</kbd> or the confirm button on a pad, or
+            <kbd>Enter</kbd> on the keyboard, to join. Browsers only report a
+            pad after you press one of its buttons. Rebind actions, move the
+            deadzone sliders, press <kbd>Y</kbd> / <kbd>Triangle</kbd> /
+            <kbd>X</kbd> or <kbd>R</kbd> to rumble, and add the scripted bot
+            to watch virtual input go through the same pipeline.
+          </p>
+        </div>
+        <div class="demo-stage" data-demo-stage>
+          <button class="button button-primary demo-load" type="button" data-load-demo>Load the demo (about 40 MB)</button>
+        </div>
+        <p class="demo-note">
+          The Web build uses Godot's Compatibility renderer and the browser
+          Gamepad API. Some browsers don't support rumble. <a href="/demo/">Open the demo full-page</a>.
+        </p>
+      </section>
+
+      <section class="section" id="features" aria-labelledby="features-title">
+        <div class="section-head"><h2 id="features-title">What it does.</h2></div>
+        <div class="grid">
+          <article><h3>One canonical layout</h3><p>Face buttons by position, triggers as 0–1 axes, sticks as 2D values, plus d-pad, start/select/home, touchpad and paddles. Families come from the USB vendor id, including the ids browsers embed in gamepad names.</p></article>
+          <article><h3>Nintendo A/B, handled</h3><p>Bind menus to <code>confirm</code> and <code>cancel</code>. Each game chooses whether confirm follows the button's position or its "A" label.</p></article>
+          <article><h3>Players and joining</h3><p>Automatic, press-to-join or manual. Keyboard and mouse is its own device. A pad that disconnects goes back to its player when it reconnects.</p></article>
+          <article><h3>Actions in categories</h3><p>Button, axis and 2D actions in categories you switch on and off per player. The press that closes a menu never leaks into gameplay.</p></article>
+          <article><h3>Rebinding</h3><p>Rebinding waits for release, then captures the next input and shapes it to the action. Conflicts swap, replace, reject or are allowed. Bindings are saved per player and per family.</p></article>
+          <article><h3>Signal processing</h3><p>Radial, axial and hybrid deadzones with inner and outer edges, response curves, and trigger thresholds with hysteresis.</p></article>
+          <article><h3>Frame-accurate</h3><p>Taps shorter than a tick are latched. Tick in <code>_physics_process</code>, <code>_process</code>, or manually at your game's original rate. Queries cover press, release, hold, double-tap, repeat and long-press.</p></article>
+          <article><h3>Glyphs and rumble</h3><p>Prompts follow each player's device live, using Kenney's Input Prompts. Rumble is per player, and gyro and light-bar hooks work where Godot exposes them.</p></article>
+          <article><h3>Virtual input</h3><p>Labelled virtual devices and a recorder let tests and demo drivers inject input through the same pipeline, and say so on screen.</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="install" aria-labelledby="install-title">
+        <div class="section-head"><h2 id="install-title">Install.</h2>
+          <p>Copy <code>addons/controllers</code> into your project and enable <strong>Controllers</strong> under Project Settings → Plugins.</p></div>
+<pre><code>Controllers.declare_action(&amp;"jump", CtlAction.Type.BUTTON, &amp;"gameplay", "Jump", {
+	"kbm": [{"key": KEY_SPACE}],
+	"gamepad": [{"pad": &amp;"face_south"}],
+})
+
+func _physics_process(_delta):
+	var p := Controllers.player(0)
+	if p.is_just_pressed(&amp;"jump"):
+		jump()</code></pre>
+      </section>
+
+      <section class="section" id="hardware" aria-labelledby="hardware-title">
+        <div class="section-head"><h2 id="hardware-title">What has been tested.</h2>
+          <p>Stated plainly, so nobody relies on what hasn't been checked.</p></div>
+        <table>
+          <thead><tr><th>Device</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Virtual devices, all families</td><td>Exercised headless: edges, latching, thresholds, deadzones, rebinding, Nintendo confirm modes, hotplug, record/replay</td></tr>
+            <tr><td>Keyboard &amp; mouse</td><td>Shown in the demo</td></tr>
+            <tr><td>Xbox, DualSense, Switch 2 Pro / Joy-Con 2</td><td><strong>Not yet tested on hardware.</strong> Help by opening an issue with your pad's name and id.</td></tr>
+            <tr><td>Gyro, light bar, rumble on the Web</td><td><strong>Untested</strong></td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        godot-controllers is MIT-licensed. Glyphs: <a href="https://kenney.nl/assets/input-prompts">Input Prompts</a> by
+        <a href="https://www.kenney.nl">Kenney</a> (CC0). By <a href="https://splatterfacegames.com">Splatterface Games</a>.
+      </p>
+    </footer>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

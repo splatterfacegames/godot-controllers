@@ -11,6 +11,8 @@ extends RefCounted
 ## everything procedurally, or point `root` at your own folder that uses
 ## the same file names.
 
+const _CtlLayoutKeys := preload("ctl_layout.gd")
+
 const DEFAULT_ROOT := "res://addons/controllers/glyphs/kenney"
 
 ## family -> control -> file (without .png).
@@ -146,7 +148,7 @@ func _pad_file(c: StringName, half: int, family: StringName) -> String:
 ## Key file by the cap the user sees (physical -> current layout).
 func _key_file(physical: int) -> String:
 	var code := physical
-	if DisplayServer.get_name() != "headless":
+	if _CtlLayoutKeys.can_map_physical_keys():
 		var logical := DisplayServer.keyboard_get_keycode_from_physical(physical)
 		if logical != 0:
 			code = logical

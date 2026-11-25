@@ -121,21 +121,35 @@ static func resolve(c: StringName, family: StringName, confirm_follows: StringNa
 ## decoded from the SDL-style GUID string (16 bytes, hex): bytes 4-5 vendor
 ## and 8-9 product, little-endian, with bytes 6-7 and 10-11 zero. GUIDs that
 ## don't follow that shape (e.g. XInput-only identities) return ZERO.
-static func vendor_product(guid: String, info: Dictionary) -> Vector2i:
+static func vendor_product(guid: String, info: Dictionary, device_name_hint := "") -> Vector2i:
 	if info.has("vendor_id"):
 		return Vector2i(int(info.get("vendor_id", 0)), int(info.get("product_id", 0)))
 	if guid.length() != 32 or not guid.is_valid_hex_number():
-		return Vector2i.ZERO
+		return Vector2i.ZERO if device_name_hint == "" else vendor_from_name(device_name_hint)
 	var b := guid.hex_decode()
 	if b.size() < 12 or b[6] != 0 or b[7] != 0 or b[10] != 0 or b[11] != 0:
 		return Vector2i.ZERO
 	return Vector2i(b[4] | (b[5] << 8), b[8] | (b[9] << 8))
 
 
+## Browsers put USB ids in the gamepad id string instead of a GUID:
+## Chrome "... (STANDARD GAMEPAD Vendor: 054c Product: 0ce6)", Firefox
+## "054c-0ce6-DualSense Wireless Controller".
+static func vendor_from_name(n: String) -> Vector2i:
+	var re := RegEx.create_from_string("(?i)vendor:\\s*([0-9a-f]{4})\\s*product:\\s*([0-9a-f]{4})")
+	var m := re.search(n)
+	if m == null:
+		re = RegEx.create_from_string("^([0-9a-f]{4})-([0-9a-f]{4})-")
+		m = re.search(n.to_lower())
+	if m == null:
+		return Vector2i.ZERO
+	return Vector2i(m.get_string(1).hex_to_int(), m.get_string(2).hex_to_int())
+
+
 ## Family from vendor id first, then conservative name matching. A generic
 ## XInput identity is NOT branded as Xbox: unknown stays generic.
 static func detect_family(device_name: String, guid: String, info: Dictionary) -> StringName:
-	match vendor_product(guid, info).x:
+	match vendor_product(guid, info, device_name).x:
 		VENDOR_MICROSOFT:
 			return FAMILY_XBOX
 		VENDOR_SONY:
@@ -317,10 +331,16 @@ static func glyph(binding: Dictionary, family: StringName, confirm_follows := CO
 	return out
 
 
+## Whether the display server can map physical keys through the current
+## keyboard layout (not headless, not the Web, which logs an error per call).
+static func can_map_physical_keys() -> bool:
+	return DisplayServer.get_name() != "headless" and not OS.has_feature("web")
+
+
 ## Key cap text for a PHYSICAL keycode, through the current keyboard layout
 ## when a display server can resolve it.
 static func key_label(physical: int) -> String:
-	if DisplayServer.get_name() != "headless":
+	if can_map_physical_keys():
 		var logical := DisplayServer.keyboard_get_keycode_from_physical(physical)
 		if logical != 0:
 			var s := OS.get_keycode_string(logical)

@@ -105,6 +105,11 @@ func _build() -> void:
 	_auto = Label.new()
 	_auto.add_theme_color_override("font_color", Color("#ff7a7a"))
 	bar.add_child(_auto)
+	if OS.has_feature("web"):
+		var hint := Label.new()
+		hint.text = "In a browser, a controller appears only after you press one of its buttons. Click the page first so the keyboard works."
+		hint.add_theme_color_override("font_color", Color("#9aa3b5"))
+		root.add_child(hint)
 	_status = Label.new()
 	_status.add_theme_color_override("font_color", Color("#ffcf5a"))
 	root.add_child(_status)
@@ -118,7 +123,55 @@ func _build() -> void:
 		var panel := _make_panel(i)
 		grid.add_child(panel.root)
 		_panels.append(panel)
+	root.add_child(_make_gallery())
 	_rebuild_needed()
+
+
+## The same actions on every family at once (glyph theme: Kenney Input
+## Prompts; anything it lacks falls back to the procedural glyph).
+func _make_gallery() -> Control:
+	var pc := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("#161a23")
+	sb.set_corner_radius_all(6)
+	sb.set_content_margin_all(8)
+	pc.add_theme_stylebox_override("panel", sb)
+	var v := VBoxContainer.new()
+	pc.add_child(v)
+	var t := Label.new()
+	t.text = "Glyph gallery — the same bindings on every family (confirm/back follow the confirm setting)"
+	t.add_theme_font_size_override("font_size", 12)
+	t.add_theme_color_override("font_color", Color("#9aa3b5"))
+	v.add_child(t)
+	_gallery = HFlowContainer.new()
+	_gallery.add_theme_constant_override("h_separation", 22)
+	v.add_child(_gallery)
+	return pc
+
+
+var _gallery: HFlowContainer
+
+
+func _refresh_gallery() -> void:
+	if _gallery == null:
+		return
+	for c in _gallery.get_children():
+		c.queue_free()
+	for fam in [Layout.FAMILY_XBOX, Layout.FAMILY_PLAYSTATION, Layout.FAMILY_NINTENDO, Layout.FAMILY_GENERIC, Layout.FAMILY_KBM]:
+		var box := HBoxContainer.new()
+		var name := Label.new()
+		name.text = Layout.family_display_name(fam) + ":"
+		name.add_theme_font_size_override("font_size", 12)
+		box.add_child(name)
+		for a in [&"move", &"jump", &"fire", &"brake", &"menu_accept", &"menu_back", &"pause"]:
+			for g in ci.glyphs_for_family(0, a, fam, 0):
+				var gl := Glyph.new()
+				gl.glyph_size = 26
+				gl.show_label = false
+				gl.set_glyph(g)
+				gl.tooltip_text = "%s: %s" % [ci.get_action(a).label, g.text]
+				box.add_child(gl)
+		_gallery.add_child(box)
 
 
 func _make_panel(i: int) -> Dictionary:
@@ -225,6 +278,7 @@ func _rebuild_needed() -> void:
 
 func _refresh_static() -> void:
 	_dirty = false
+	_refresh_gallery()
 	for i in _panels.size():
 		var panel: Dictionary = _panels[i]
 		var p = ci.player(i)
@@ -327,7 +381,7 @@ func _process(_delta: float) -> void:
 		var lines := []
 		for a in [&"jump", &"fire", &"brake", &"rumble", &"menu_accept", &"menu_back", &"pause"]:
 			lines.append("%-12s %s  presses %d  double %d  held %.2fs" % [a,
-				"■" if p.is_pressed(a) else "□", int(panel.counts.get(a, 0)),
+				"ON " if p.is_pressed(a) else "-- ", int(panel.counts.get(a, 0)),
 				int(panel.counts.get(String(a) + "_x2", 0)), p.held_time(a)])
 		panel.states.text = "\n".join(lines)
 
