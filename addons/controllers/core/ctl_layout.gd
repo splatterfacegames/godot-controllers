@@ -45,6 +45,22 @@ const BUTTONS := {
 	&"misc_2": 21, &"misc_3": 22, &"misc_4": 23, &"misc_5": 24, &"misc_6": 25,
 }
 
+## Godot JoyButton -> control (reverse of BUTTONS).
+const CONTROL_OF_BUTTON := {
+	JOY_BUTTON_A: &"face_south", JOY_BUTTON_B: &"face_east",
+	JOY_BUTTON_X: &"face_west", JOY_BUTTON_Y: &"face_north",
+	JOY_BUTTON_BACK: &"select", JOY_BUTTON_GUIDE: &"home", JOY_BUTTON_START: &"start",
+	JOY_BUTTON_LEFT_STICK: &"stick_l_press", JOY_BUTTON_RIGHT_STICK: &"stick_r_press",
+	JOY_BUTTON_LEFT_SHOULDER: &"shoulder_l", JOY_BUTTON_RIGHT_SHOULDER: &"shoulder_r",
+	JOY_BUTTON_DPAD_UP: &"dpad_up", JOY_BUTTON_DPAD_DOWN: &"dpad_down",
+	JOY_BUTTON_DPAD_LEFT: &"dpad_left", JOY_BUTTON_DPAD_RIGHT: &"dpad_right",
+	JOY_BUTTON_MISC1: &"misc",
+	JOY_BUTTON_PADDLE1: &"paddle_1", JOY_BUTTON_PADDLE2: &"paddle_2",
+	JOY_BUTTON_PADDLE3: &"paddle_3", JOY_BUTTON_PADDLE4: &"paddle_4",
+	JOY_BUTTON_TOUCHPAD: &"touchpad",
+	21: &"misc_2", 22: &"misc_3", 23: &"misc_4", 24: &"misc_5", 25: &"misc_6",
+}
+
 ## Analog controls -> Godot JoyAxis. Sticks are -1..1, triggers 0..1.
 const AXES := {
 	&"stick_l_x": JOY_AXIS_LEFT_X, &"stick_l_y": JOY_AXIS_LEFT_Y,

@@ -3,9 +3,6 @@ extends "ctl_device.gd"
 
 ## A physical gamepad/joystick known to Godot by its joy id.
 
-static var _button_controls: Dictionary = {}
-
-
 func _init(joy_id: int) -> void:
 	id = joy_id
 	kind = KIND_PAD
@@ -14,9 +11,6 @@ func _init(joy_id: int) -> void:
 	info = Input.get_joy_info(joy_id)
 	detected_family = _Layout.detect_family(display_name, guid, info)
 	family = detected_family
-	if _button_controls.is_empty():
-		for c in _Layout.BUTTONS:
-			_button_controls[_Layout.BUTTONS[c]] = c
 
 
 ## Godot knows a gamepad mapping for this device (SDL database or custom).
@@ -27,7 +21,7 @@ func is_mapped() -> bool:
 
 func latch_event(event: InputEvent) -> void:
 	if event is InputEventJoypadButton and event.pressed:
-		var c: Variant = _button_controls.get(event.button_index)
+		var c: Variant = _Layout.CONTROL_OF_BUTTON.get(event.button_index)
 		if c != null:
 			_latched["b:" + String(c)] = true
 
