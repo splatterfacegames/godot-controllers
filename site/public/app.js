@@ -4,7 +4,7 @@ const demoStage = document.querySelector("[data-demo-stage]");
 
 loadButton?.addEventListener("click", () => {
   const frame = document.createElement("iframe");
-  frame.src = "/demo/";
+  frame.src = "demo/";
   frame.title = "godot-controllers web demo";
   frame.allow = "fullscreen; gamepad; clipboard-write";
   loadButton.remove();
