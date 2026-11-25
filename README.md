@@ -1,5 +1,7 @@
 # godot-controllers
 
+**Live demo: https://godot-controllers.splatterfacegames.com**
+
 Input management and normalization for Godot 4.7+, for local
 multiplayer games played with Xbox, PlayStation, Nintendo and generic
 pads, and with keyboard and mouse.
