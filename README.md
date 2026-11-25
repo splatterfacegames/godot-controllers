@@ -23,8 +23,8 @@ pads, and with keyboard and mouse.
   and long-press. Taps shorter than one tick are latched. Input can tick
   in `_physics_process`, `_process`, or a manual tick for games that
   simulate at their original rate.
-* **Live glyphs.** Prompts follow each player's last used device. All
-  glyph art is drawn procedurally (no logo assets).
+* **Live glyphs.** Prompts follow each player's last used device, using
+  Kenney's Input Prompts (CC0) with procedural fallbacks.
 * **Rumble per player.** Gyro, accelerometer and light-bar support where
   Godot exposes them.
 * **Virtual devices and a recorder.** Labelled virtual devices and a
@@ -122,7 +122,13 @@ pad is detected wrongly.
 
 ## Art and licence
 
-MIT (see `LICENSE`). The library ships no image assets. Every glyph is
-drawn with Godot draw calls in `ui/ctl_glyph.gd`, and no manufacturer
-logos are reproduced. Button names such as "Cross" or "ZL" are used only
-as plain-text labels for the buttons they describe.
+Code: MIT (see `LICENSE`).
+
+Glyph textures: **Kenney "Input Prompts" 1.5a** by Kenney (www.kenney.nl),
+CC0. The 128 px PNGs for Xbox Series, PlayStation, Nintendo Switch 2,
+generic and keyboard & mouse live in `addons/controllers/glyphs/kenney/`,
+with Kenney's `License.txt`. `CtlGlyphTheme` maps controls to those files.
+Anything the pack doesn't cover (for example the PlayStation home button,
+or face buttons on generic pads) falls back to the procedural `CtlGlyph`
+drawing. Set `Controllers.glyph_theme = ""` to draw everything
+procedurally, or point it at your own folder that uses the same file names.

@@ -48,6 +48,7 @@ const _Device := preload("ctl_device.gd")
 const _Joypad := preload("ctl_joypad_device.gd")
 const _Kbm := preload("ctl_kbm_device.gd")
 const _Virtual := preload("ctl_virtual_device.gd")
+const _Theme := preload("ctl_glyph_theme.gd")
 
 enum JoinMode { AUTO, PRESS, MANUAL }
 enum TickMode { PHYSICS, PROCESS, MANUAL }
@@ -77,6 +78,14 @@ const POLICY_ALLOW := &"allow"
 @export var conflict_policy: StringName = POLICY_SWAP
 ## Release everything and ignore input while the window is unfocused.
 @export var release_on_focus_loss := true
+## Glyph texture folder (Kenney Input Prompts by default). "" = draw every
+## glyph procedurally. A custom folder must use the same layout/file names.
+@export var glyph_theme := _Theme.DEFAULT_ROOT:
+	set(v):
+		glyph_theme = v
+		_theme = _Theme.new(v) if v != "" else null
+		for p in _players:
+			glyphs_changed.emit(p.index)
 ## Persist bindings/settings here ("" disables persistence).
 @export var storage_path := "user://controllers/input.cfg"
 
@@ -95,6 +104,7 @@ var _rebind: Dictionary = {}
 var _cfg := ConfigFile.new()
 var _cfg_loaded := false
 var _last_any_device: _Device = null
+var _theme: RefCounted = _Theme.new()
 
 
 func _init() -> void:
@@ -682,14 +692,25 @@ func glyphs_for_family(player_index: int, action: StringName, family: StringName
 		list = [list[slot]] if slot < list.size() else []
 	var out := []
 	for b in list:
-		out.append(_Layout.glyph(b, family, confirm_follows))
+		out.append(glyph_for_binding(b, family))
 	if out.is_empty() and slot < 0:
 		var other: StringName = _Layout.FAMILY_XBOX if family == _Layout.FAMILY_KBM else _Layout.FAMILY_KBM
 		for b in p.bindings_for(a, other):
-			out.append(_Layout.glyph(b, other, confirm_follows))
+			out.append(glyph_for_binding(b, other))
 	if out.is_empty():
 		out.append({"text": "Unbound", "style": &"unbound", "icon": &""})
 	return out
+
+
+## One binding's glyph on a family, with the theme texture (path under
+## "texture") when the theme has one.
+func glyph_for_binding(binding: Dictionary, family: StringName) -> Dictionary:
+	var g := _Layout.glyph(binding, family, confirm_follows)
+	if _theme != null:
+		var path: String = _theme.path_for(binding, g, family)
+		if path != "":
+			g["texture"] = path
+	return g
 
 
 func glyph_text(player_index: int, action: StringName) -> String:

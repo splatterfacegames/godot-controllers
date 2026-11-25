@@ -47,6 +47,12 @@ const HIGHLIGHT := Color("#ffcf5a")
 
 var _icon_text := ""
 var _icon_only := false
+## Theme texture (e.g. Kenney Input Prompts); drawn instead of the
+## procedural icon when set. The texture carries its own label.
+var texture: Texture2D = null:
+	set(v):
+		texture = v
+		_refresh()
 
 
 func _init() -> void:
@@ -58,6 +64,8 @@ func _init() -> void:
 func set_glyph(g: Dictionary) -> void:
 	_icon_text = str(g.get("icon_text", ""))
 	_icon_only = bool(g.get("icon_only", false))
+	var tp := str(g.get("texture", ""))
+	texture = load(tp) if tp != "" and ResourceLoader.exists(tp) else null
 	icon = StringName(g.get("icon", &""))
 	text = str(g.get("text", ""))
 
@@ -67,12 +75,15 @@ func _font() -> Font:
 
 
 func _label_visible() -> bool:
-	return show_label and text != "" and icon != &"" and not _icon_only
+	return show_label and text != "" and icon != &"" and not _icon_only and texture == null
 
 
 func _refresh() -> void:
 	var w := glyph_size
-	if icon == &"":
+	if texture != null:
+		var ts := texture.get_size()
+		w = glyph_size * (ts.x / ts.y if ts.y > 0 else 1.0)
+	elif icon == &"":
 		w = maxf(glyph_size, _font().get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(glyph_size * 0.5)).x + glyph_size * 0.5)
 	elif _label_visible():
 		w += 4.0 + _font().get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(glyph_size * 0.5)).x
@@ -85,6 +96,11 @@ func _draw() -> void:
 	var s := glyph_size
 	var c := Vector2(s, s) * 0.5
 	var r := s * 0.45
+	if texture != null:
+		var ts := texture.get_size()
+		var w := s * (ts.x / ts.y if ts.y > 0 else 1.0)
+		draw_texture_rect(texture, Rect2(0, 0, w, s), false)
+		return
 	match icon:
 		&"":
 			_keycap(s)

@@ -194,9 +194,12 @@ Controllers.declare_action(&"move", CtlAction.Type.AXIS_2D, &"gameplay", "Move",
   player's last used device family.
 * `glyphs_changed(player_index)` fires when that family changes, when
   bindings change and when `confirm_follows` changes.
-* `CtlGlyph` draws every icon procedurally and `CtlPrompt` is a
-  self-updating widget. There are no image files and no manufacturer
-  logos. The art is original and MIT licensed.
+* Each descriptor also carries `texture` (a res:// path) when the glyph
+  theme has an image for it. The default theme is Kenney's Input Prompts
+  (CC0, bundled under `glyphs/kenney/`, 128 px), selected with
+  `Controllers.glyph_theme`.
+* `CtlGlyph` draws the texture, or falls back to its procedural icon
+  (`""` disables textures). `CtlPrompt` is a self-updating widget.
 
 ## Output
 
