@@ -219,6 +219,18 @@ Controllers.declare_action(&"move", CtlAction.Type.AXIS_2D, &"gameplay", "Move",
   Nintendo HD rumble, Xbox impulse-trigger motors and audio haptics.
   `supports()` returns false and the setters return `ERR_UNAVAILABLE`.
 
+## Synthetic input from other layers
+
+If a title turns pad input into keyboard or mouse events (for example a
+stick-driven virtual cursor whose clicks go to screens that read the
+mouse), tag those events with `CtlInput.mark_synthetic(event)` before
+`Input.parse_input_event`. Tagging sets `device = CtlInput.SYNTHETIC_DEVICE`
+(-78). The manager ignores any event whose device is in
+`ignored_event_devices` (default `[SYNTHETIC_DEVICE]`), so a pad player's
+glyphs don't flip to keyboard. Godot copies the device id into viewport
+copies of mouse events, so tagging survives local coordinates. Don't use
+-1 or -2: Godot reserves those, and viewports don't deliver -2 to nodes.
+
 ## Testability
 
 * `Controllers.add_virtual_device(family, label)` adds a virtual device.

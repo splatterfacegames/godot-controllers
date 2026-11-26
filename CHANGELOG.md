@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1 — 2026-11-27
+
+- Synthetic events: `CtlInput.SYNTHETIC_DEVICE` (-78), `mark_synthetic()`,
+  `is_ignored_event()` and `ignored_event_devices`. Tagged keyboard and
+  mouse events (e.g. a pad-driven virtual cursor) are not keyboard/mouse
+  activity. Upstreamed from Wages of War.
+- Web: family detection reads USB ids from browser gamepad names. The
+  Web build skips physical-key layout mapping. A web demo site was added.
+
 ## 0.2.0 — 2026-11-25
 
 Glyph textures: bundles Kenney's Input Prompts 1.5a (CC0) for Xbox,

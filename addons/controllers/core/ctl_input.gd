@@ -58,6 +58,12 @@ const POLICY_REPLACE := &"replace"
 const POLICY_REJECT := &"reject"
 const POLICY_ALLOW := &"allow"
 
+## Device id for keyboard/mouse events a title synthesises from other input
+## (e.g. a virtual mouse cursor driven by a stick). Not -1 or -2: Godot
+## reserves those (DEVICE_ID_EMULATION / DEVICE_ID_INTERNAL), and viewports
+## don't deliver -2 events to nodes. Stamp events with mark_synthetic().
+const SYNTHETIC_DEVICE := -78
+
 @export var join_mode: JoinMode = JoinMode.AUTO
 @export var tick_mode: TickMode = TickMode.PHYSICS:
 	set(v):
@@ -88,6 +94,11 @@ const POLICY_ALLOW := &"allow"
 			glyphs_changed.emit(p.index)
 ## Persist bindings/settings here ("" disables persistence).
 @export var storage_path := "user://controllers/input.cfg"
+
+## Event device ids this manager ignores entirely: no keyboard/mouse
+## activity, no latching, no prompt-family change. Defaults to
+## SYNTHETIC_DEVICE; add your own ids if another layer injects events.
+var ignored_event_devices: PackedInt32Array = PackedInt32Array([SYNTHETIC_DEVICE])
 
 ## PRESS mode join inputs.
 var join_bindings: Array = [{"pad": &"start"}, {"pad": &"confirm"},
@@ -141,6 +152,8 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if event.device in ignored_event_devices:
+		return
 	if event is InputEventKey or event is InputEventMouseButton or event is InputEventMouseMotion:
 		_kbm.latch_event(event)
 	elif event is InputEventJoypadButton:
@@ -158,6 +171,18 @@ func _notification(what: int) -> void:
 				p.stop_rumble()
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN or what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
 		_focused = true
+
+
+## Tag an event you synthesise from pad input (virtual cursor clicks, key
+## presses standing in for buttons) so it doesn't count as keyboard/mouse
+## activity here or in any layer honouring SYNTHETIC_DEVICE. Returns it.
+static func mark_synthetic(event: InputEvent) -> InputEvent:
+	event.device = SYNTHETIC_DEVICE
+	return event
+
+
+func is_ignored_event(event: InputEvent) -> bool:
+	return event.device in ignored_event_devices
 
 
 ## Testing/QA: behave as if focus changed.
